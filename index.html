@@ -1,0 +1,93 @@
+
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Main - Home</title>
+
+        <link rel='stylesheet' href='system/templates/js/foundation-5.5.0/css/normalize.css'/><link rel='stylesheet' href='system/templates/js/foundation-5.5.0/css/foundation.css'/><link rel='stylesheet' href='system/templates/css/style.css'/>
+        <link rel='stylesheet' href='system/templates/js/jquery-ui-1.10.4.custom/css/smoothness/jquery-ui-1.10.4.custom.min.css'/>
+        
+        <script src='system/templates/js/foundation-5.5.0/js/vendor/jquery.js'></script>
+        <script src='system/templates/js/jquery-ui-1.10.4.custom/js/jquery-ui-1.10.4.custom.min.js'></script>      
+        <script type="text/javascript" src="system/templates/js/foundation-5.5.0/js/foundation.min.js"></script>
+        <script src='json3.js'></script>
+        <script src='sprint.js'></script>
+        <script src='scrumsprint.js'></script>
+        <script type="text/javascript">
+            var $ = jQuery;
+        </script>
+    </head>
+    <body>
+        <div class="row-fluid body">
+           <div class="row-fluid ">
+                <div data-id='1' class="sprint row">
+					<style>
+						.row {
+						max-width: 100%;
+						}
+						.sprintgoaldescription {
+							min-width: 100px !important;
+							background-color: grey;
+						}
+						.sprintlists, .sprintlist, .sprintgroup ,.sprintitem,.sprintusers, .sprintuser {
+							border :1px solid black;
+							dmargin: 0.1em;
+							dpadding: 0.1em;
+						}
+						.sprintuser {
+							border: 2px solid blue;
+							padding-left: 	0.5em;
+							border-radius: 10px;
+							background-color: lightblue;
+						}
+						.pollinglabel { display: inline; margin-left: 1em;}
+						.dissprintlist {overflow-y: scroll; height: 100%;}
+					</style>
+					
+					<div class='small-1 columns' ><a href='#' class='button tiny' id='trashcan' >Trash</a></div>
+                    <div class='small-6 columns' >
+						<h3 class="header"  >Sprint M2 Authority Data</h3>
+						<div class="sprintgoals row" >
+							<div class='small-11 columns' >
+								<div class='sprintgoal' data-id='2' ><b class='title' >sprint UI</b><span class='sprintgoaldescription' > Show data from attendance database that will be required for timesheets</span>
+								</div>
+								<div class='sprintgoal' data-id='3' ><b>sprint ATT</b><span class='sprintgoaldescription'>Show data from attendance database that will be required for timesheets</span>
+								</div>
+							</div>
+						</div>
+					</div>
+                    <div class='small-2 columns' ><label for="sprintstartdate" >Start<input type='text' id='sprintstartdate'  class='datepicker' value='24/03/2015' /></label><label for="sprintenddate" >End<input type='text' id='sprintenddate' class='datepicker' value='30/03/2015' /></div>
+                    <div class='searchtasks small-3 columns'><a href='#' class='resetsprintbutton button tiny' >New Sprint</a> <a href='#' class='loadsprintbutton button tiny' >Load Sprint</a><label class='right pollinglabel' for='polling'  >Polling <input checked="true" type='checkbox' id='polling' /></label><div class='storypoints' ><span class='storypoint' >0.5</span><span class='storypoint' >1</span><span class='storypoint' >2</span><span class='storypoint' >3</span><span class='storypoint' >4</span><span class='storypoint' >5</span><span class='storypoint' >6</span><span class='storypoint' >8</span><span class='storypoint' >10</span><span class='storypoint' >15</span><span class='storypoint' >20</span><span class='storypoint' >30</span><span class='storypoint' >50</span></div>
+                    
+                </div>
+                
+                <div class="sprintlists row" >
+                    <div class='small-3 large-2 columns sprintusers'><h3><a href='#' class='addsprintuser button tiny'>+</a> Users</h3><div class='sprintuser' data-id='1' >Adam</div><div class='sprintuser' data-id='2' >Steve</div><div class='sprintuser' data-id='3' >Greg</div></div>
+                    <div class='sprintlist product_backlog small-4 large-2 columns' data-id='product_backlog' ><a href='#' class='button tiny addtaskbutton' >Add Task</a><a href='#' class='button tiny right addgroupbutton' >Add Group</a><h3>Product Backlog</h3></div>
+                    <div class='sprintlist sprint_backlog small-4 large-2 columns'  data-id='sprint_backlog' ><h3>Sprint Backlog</h3>
+						<div class='sprintgroup' data-id="2" >
+							<h3>sprint UI</h3>
+							<div data-id='1' class='sprintitem' >create a new sprint</div>
+							<div data-id='2'  class='sprintitem' >list sprints http://html5demos.com/contenteditable</div>
+							<div data-id='3' class='sprintitem' >show sprint</div>
+							<div data-id='4' class='sprintitem' >add sprint item</div>
+							<div data-id='5' class='sprintitem' >inline edit sprint item</div>
+						</div>
+					</div>
+					<div class='sprintlist todo small-4 large-2 columns' data-id='todo'><h3>Todo</h3><div data-id='6' class='sprintitem' >inline edit sprint item anywhere else</div></div>
+                    <div class='sprintlist doing small-4 large-2 columns' data-id='doing'><h3>Doing</h3>
+                    </div>
+                    <div class='sprintlist done small-4 large-2 columns end' data-id='done' ><h3>Done</h3></div>
+                  
+                </div>
+            </div>
+        </div>
+
+        <div id="sprintmodal" class="reveal-modal xlarge" data-reveal style="top: 30px !important;"></div>
+        
+        
+        </script>
+    </body>
+</html>
