@@ -34,6 +34,7 @@
 						var newPoint=$(ui.draggable).clone(true,true);
 						$(dropTarget).prepend(newPoint);
 						newPoint.addClass('right');
+						saveSprint();
 					}
 				// DRAG USER
 				} else if ($(ui.draggable).hasClass('sprintuser')) {
@@ -45,8 +46,10 @@
 							$('.sprintuser',dropTarget).remove();
 							$(dropTarget).append('<div class="sprintitemusers"></div>');
 						}
+						$('.sprintuser[data-id="'+$(ui.draggable).attr('data-id')+'"]').remove();
 						var newUser=$('<div class="sprintuser" data-id="'+$(ui.draggable).attr('data-id')+'" >'+$(ui.draggable).text()+'</div>').draggable({'revert':'invalid'});
 						$('.sprintitemusers',dropTarget).append(newUser);
+						saveSprint();
 					} else if ($(dropTarget).hasClass('sprintgroup')) {
 						console.log('user onto item user onto group - apply to all in group after confirm');
 						console.log('TODO');

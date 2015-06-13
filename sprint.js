@@ -49,13 +49,13 @@ function initSprint() {
 		pollTimeout=setTimeout(function() {
 			if ($('#polling').get(0).checked) {
 				var lastSaved=$('.sprint').attr('data-lastsaved');
-				$.ajax({ url: "scrumsprint.php?sprint="+$('.sprint').attr('data-id')+"&poll="+lastSaved, complete: function(data) {
+				$.ajax({ url: "scrumsprint.php?sprint="+$('.sprint').attr('data-id')+"&poll="+lastSaved}).success(function(data) {
 					try {
 						//var json=JSON.parse(data.replace("\n","")+';');
 						if (data.responseText && data.responseText.length>0)  {
 							var json=JSON3.parse(data.responseText.replace("\r","").replace("\n",""));
 							if (json.id!=null && json.id.length>0) {
-								//alert('restore');
+								console.log('restore');
 								restoreSprint(json);
 							}
 						}
@@ -63,7 +63,7 @@ function initSprint() {
 						console.log(e);
 					}
 					poll();
-			   } });
+			   }) ;
 			}
 		}, 3000);
 	}
