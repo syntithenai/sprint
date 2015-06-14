@@ -163,9 +163,8 @@
 			var res='';
 			if ($(this).hasClass('sprintitemdescription')) {
 				var sprint=$(this).parent();
-				console.log(['soru',sprint]);
 				var text=$(e.target).text();
-				var input=$('<input type="text" class="small" value="'+text+'" />');
+				var input=$('<textarea>'+text+'</textarea>');
 				$(this).before(input);
 				$(this).hide();
 				$('.storypoint',sprint).hide();
@@ -174,6 +173,7 @@
 				input.bind('blur',function() {
 					console.log('restore vals');
 					$(desc).text(input.val());
+					RESTAPI().updateTask(sprint.attr('data-id'),input.val(),null);
 					input.hide();
 					$(desc).show();
 					$('.storypoint',sprint).show();
@@ -187,7 +187,7 @@
 					saveSprint();
 				});
 				
-			} else if ($(this).hasClass('sprintitem')) {
+			}/* else if ($(this).hasClass('sprintitem')) {
 				$('#sprintitemeditor').remove();
 				res='<textarea id="sprintitemeditortextarea" data-id="'+$(this).attr('data-id')+'" >'+$(this).text()+'</textarea>';
 				$('body').append($('<div id="sprintitemeditor" class="reveal-modal" data-reveal aria-hidden="true" role="dialog">'+res+'<a class="close-reveal-modal" aria-label="Close">&#215;</a><a class="button tiny savesprintitembutton" >Save</a></div>'));
@@ -201,7 +201,7 @@
 					$('.sprintitem[data-id="'+$('#sprintitemeditortextarea').attr('data-id')+'"] .sprintitemdescription').text($('#sprintitemeditortextarea').val());
 					$('#sprintitemeditor').foundation('reveal','close');
 				});
-			}
+			}*/
 		});
 
 	}

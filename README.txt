@@ -39,6 +39,8 @@ BUGS
 
 TODO
 - REST API
+- tabs for backlog/active - drag onto tab to move to TODO list
+- label length limit for sprint item description with mouseover
 - Edit group title, goal text by double clicking
 	- Tickboxes in goal list to hide all group items 
 	- Cross to remove group from sprint.
@@ -50,6 +52,7 @@ TODO
 - Group/goal render - checkbox disable, button delete group
 - check task title on save/load - BEFOrE SAVE Avoid conflicts where task/group title updated elsewhere
 - request hours worked when dropping into Done list
+- checkbox next to sprint users to hide/show items by user
 
 MAYBE
 - User based interactions

@@ -25,12 +25,15 @@ function addSprintGroup() {
 }
 function addSprintUser() {
 	var a=prompt('User name');
-	var newContent=$('<div class="sprintuser" data-id="'+ Math.random().toString(36).substr(2, 9)+'" >'+a+'</div>');
+	var newContent=$('<span class="sprintuser" data-id="'+ Math.random().toString(36).substr(2, 9)+'" >'+a+'</span>');
 	$('.sprintusers').append(newContent);								
 	bindDragDrop(newContent.parent());
 	saveSprint();
 }
-
+/** 
+ * when page is first loaded/reloaded pull from local storage 
+ * then start polling for updates
+ */
 function initSprint() {
 	console.log('init');
 	try {
@@ -80,8 +83,9 @@ function saveSprint() {
 	var currentSprint=serialiseSprint();
 	localStorage.setItem('currentsprint',JSON.stringify(currentSprint));
 	console.log(['save',currentSprint]);
-	$.post('scrumsprint.php',{'sprint':JSON.stringify(currentSprint)},function(content) {
-		console.log(['loaded',content]);
+	RESTAPI().saveSprint(currentSprint).then(function(content) {
+		console.log(['save complete',content]);
+		// REST save sprint returns last saved timestamp
 		$('.sprint').attr('data-lastsaved',content);	
 	});
 }
@@ -98,7 +102,7 @@ function restoreSprint(sprint) {
 		$('#sprintenddate').val(sprint.enddate);
 		if (typeof sprint.users=='object') {
 			$.each(sprint.users,function(key,value) {
-				users+='<div class="sprintuser" data-id="'+key+'" >'+value+'</div>';
+				users+='<span class="sprintuser" data-id="'+key+'" >'+value+'</span>';
 			});
 			$('.sprintusers .sprintuser').remove();
 			$('.sprintusers').append(users);
@@ -233,34 +237,51 @@ function serialiseSprint() {
 function loadSprintsWizard() {
 	console.log('load sprints');
 	var button=this;
-	$.get('scrumsprint.php?list=20&sprint='+$('.sprint').attr('data-id'),function(res) {		
-		$('#loadsprintlist').remove();
-		$('body').append($('<div id="loadsprintlist" class="reveal-modal" data-reveal aria-hidden="true" role="dialog">'+res+'<a class="close-reveal-modal" aria-label="Close">&#215;</a></div>'));
-		$('#loadsprintlist').foundation('reveal','open');
-		$('#loadsprintlist .dbloadsprintbutton').click(function() {
-			$.ajax({ url: "scrumsprint.php?poll=0&sprint="+$(this).attr('data-id'), complete: function(data) {
-				try {
-					if (data.responseText && data.responseText.length>0)  {
-						var json=JSON3.parse(data.responseText.replace("\r","").replace("\n",""));
-						if (json.id!=null && json.id.length>0) {
-							restoreSprint(json);
+	$('#loadsprintlist').remove();
+	$('body').append($('<div id="loadsprintlist" class="reveal-modal" data-reveal aria-hidden="true" role="dialog"><label for="loadsprintlistsearchinput" ><input id="loadsprintlistsearchinput"  type="text" /></label><div id="loadsprintlistrows" ></div><a class="close-reveal-modal" >&#215;</a></div>'));
+	$('#loadsprintlist').foundation('reveal','open');
+	function refreshSprintList() {
+		RESTAPI().searchSprints($('.sprint').attr('data-id'),$('#loadsprintlistsearchinput').val(),$('.sprint').attr('data-lastsaved')).then(function(res) {	
+			var rendered='';
+			JSON.parse(res).forEach(function(value) {
+				rendered+='<div class="row" ><span class="sprintloadtitle">'+value['sprinttitle']+'</span><a class="right button tiny dbdeletesprintbutton" href="#" data-id="'+value['sprintkey']+'" >Delete</a> <a class="right button tiny dbloadsprintbutton" data-id="'+value['sprintkey']+'" href="#"  >Load</a></div>';
+			});
+			$('#loadsprintlistrows').html(rendered);
+			$('#loadsprintlist .dbloadsprintbutton').click(function() {
+				RESTAPI().loadSprint($(this).attr('data-id')).then( function(data) {
+					console.log(['loaded',data]);
+					try {
+						if (data && data.length>0)  {
+							var json=JSON3.parse(data.replace("\r","").replace("\n",""));
+							if (json.id!=null && json.id.length>0) {
+								restoreSprint(json);
+							}
 						}
+					} catch (e) {
+						console.log(e);
 					}
-				} catch (e) {
-					console.log(e);
-				}
-				$('#loadsprintlist').foundation('reveal','close');
-			} });
-		});
-		$('#loadsprintlist .dbdeletesprintbutton').click(function() {
-			var saveAs='ll'; //$(this).parent().data('filename');
-			if (confirm('Really delete database snapshot '+saveAs +' ?')) { 
-				var button=this;
-				
-				$.get('dbmanager.php?deletesnapshot='+saveAs,function(res) {
-					$(button).parent().remove();
+					$('#loadsprintlist').foundation('reveal','close');
 				});
-			}
+			});
+			$('#loadsprintlist .dbdeletesprintbutton').click(function() {
+				var saveAs='ll'; //$(this).parent().data('filename');
+				if (confirm('Really delete sprint '+$('span.sprintloadtitle',$(this).parent()).text() +' ?')) { 
+					var button=this;
+					RESTAPI().deleteSprint($(this).attr('data-id')).then(function(res) {
+						$(button).parent().remove();
+					}).fail(function() {
+						alert('FAILED TO DELETE SPRINT');
+					});
+				}
+			});
 		});
+	}
+	var timeout;
+	$('#loadsprintlistsearchinput').keyup(function() {
+		clearTimeout(timeout);
+		timeout=setTimeout(function() {
+			refreshSprintList();
+		}, 500);
 	});
+	refreshSprintList();
 }

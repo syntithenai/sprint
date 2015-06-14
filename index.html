@@ -13,7 +13,7 @@
         <script src='system/templates/js/jquery-ui-1.10.4.custom/js/jquery-ui-1.10.4.custom.min.js'></script>      
         <script type="text/javascript" src="system/templates/js/foundation-5.5.0/js/foundation.min.js"></script>
         <script src='json3.js'></script>
-        <script src='RESTInterface.js'></script>
+        <script src='restapi.js'></script>
         <script src='sprint.js'></script>
         <script src='scrumsprint.js'></script>
         <script type="text/javascript">
@@ -26,7 +26,13 @@
                 <div data-id='1' class="sprint row">
 					<style>
 						.row {
-						max-width: 100%;
+						  max-width: 100%;
+						 }
+						.sprintitem {
+						  min-height: 40px;
+						}
+						.sprintitemdescription {
+						  min-height: 40px;
 						}
 						.sprintgoaldescription {
 							min-width: 100px !important;
@@ -40,16 +46,29 @@
 						.sprintuser {
 							border: 2px solid blue;
 							padding-left: 	0.5em;
+							padding-right: 	0.5em;
 							border-radius: 10px;
 							background-color: lightblue;
 						}
 						.pollinglabel { display: inline; margin-left: 1em;}
 						.dissprintlist {overflow-y: scroll; height: 100%;}
+						.trashwrap {background-color: lightblue; padding: 1em;}
+						#trashcan {padding: 1em ;}
 					</style>
 					
-					<div class='small-1 columns' ><a href='#' class='button tiny' id='trashcan' >Trash</a></div>
+					
                     <div class='small-6 columns' >
-						<h3 class="header"  >Sprint M2 Authority Data</h3>
+						<div class="row" >
+							<div class='small-3 columns' >
+								<span class='small-1 columns trashwrap' >
+									<a href='#' class='button tiny' id='trashcan' >Trash</a>
+								</span>
+							</div>
+							<div class='small-9 columns' >
+								<h3 class="header"  >Sprint M2 Authority Data</h3>
+								<div class='sprintusers row'><b><a href='#' class='addsprintuser button tiny'>+</a> Users</b><span class='sprintuser' data-id='3' >Greg</span></div>
+							</div>
+						</div>
 						<div class="sprintgoals row" >
 							<div class='small-11 columns' >
 								<div class='sprintgoal' data-id='2' ><b class='title' >sprint UI</b><span class='sprintgoaldescription' > Show data from attendance database that will be required for timesheets</span>
@@ -58,14 +77,20 @@
 								</div>
 							</div>
 						</div>
+						 
 					</div>
                     <div class='small-2 columns' ><label for="sprintstartdate" >Start<input type='text' id='sprintstartdate'  class='datepicker' value='24/03/2015' /></label><label for="sprintenddate" >End<input type='text' id='sprintenddate' class='datepicker' value='30/03/2015' /></div>
-                    <div class='searchtasks small-3 columns'><a href='#' class='resetsprintbutton button tiny' >New Sprint</a> <a href='#' class='loadsprintbutton button tiny' >Load Sprint</a><label class='right pollinglabel' for='polling'  >Polling <input checked="true" type='checkbox' id='polling' /></label><div class='storypoints' ><span class='storypoint' >0.5</span><span class='storypoint' >1</span><span class='storypoint' >2</span><span class='storypoint' >3</span><span class='storypoint' >4</span><span class='storypoint' >5</span><span class='storypoint' >6</span><span class='storypoint' >8</span><span class='storypoint' >10</span><span class='storypoint' >15</span><span class='storypoint' >20</span><span class='storypoint' >30</span><span class='storypoint' >50</span></div>
+                    <div class='searchtasks small-4 columns'>
+						<a href='#' class='undosprintbutton button tiny' >Undo</a>
+						<a href='#' class='redosprintbutton button tiny' >Redo</a>
+						<a href='#' class='resetsprintbutton button tiny' >New Sprint</a> 
+						<a href='#' class='loadsprintbutton button tiny' >Load Sprint</a>
+						<label class='right pollinglabel' for='polling'  >Polling <input checked="true" type='checkbox' id='polling' /></label>
+						<div class='storypoints' ><span class='storypoint' >0.5</span><span class='storypoint' >1</span><span class='storypoint' >2</span><span class='storypoint' >3</span><span class='storypoint' >4</span><span class='storypoint' >5</span><span class='storypoint' >6</span><span class='storypoint' >8</span><span class='storypoint' >10</span><span class='storypoint' >15</span><span class='storypoint' >20</span><span class='storypoint' >30</span><span class='storypoint' >50</span></div>
                     
                 </div>
                 
                 <div class="sprintlists row" >
-                    <div class='small-3 large-2 columns sprintusers'><h3><a href='#' class='addsprintuser button tiny'>+</a> Users</h3><div class='sprintuser' data-id='1' >Adam</div><div class='sprintuser' data-id='2' >Steve</div><div class='sprintuser' data-id='3' >Greg</div></div>
                     <div class='sprintlist product_backlog small-4 large-2 columns' data-id='product_backlog' ><a href='#' class='button tiny addtaskbutton' >Add Task</a><a href='#' class='button tiny right addgroupbutton' >Add Group</a><h3>Product Backlog</h3></div>
                     <div class='sprintlist sprint_backlog small-4 large-2 columns'  data-id='sprint_backlog' ><h3>Sprint Backlog</h3>
 						<div class='sprintgroup' data-id="2" >
