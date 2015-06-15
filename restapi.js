@@ -62,10 +62,14 @@ RESTAPI= function() {
 		});
 		return promise;
 	};
-	var loadSprint = function(sprintKey) {
+	var loadSprint = function(sprintKey,history) {
 		var promise=new $.Deferred();
+		var historyText='';
+		if (history && parseInt(history)>0)  {
+			historyText='&undo='+history;
+		}
 		getToken(token).then(function() {
-			$.ajax({ url: "scrumsprint.php?poll=0&sprint="+sprintKey}).success(function(response) {
+			$.ajax({ url: "scrumsprint.php?poll=0&sprint="+sprintKey+historyText}).success(function(response) {
 				promise.resolve(response);
 			}).fail(function(response) {
 				promise.reject(response);
@@ -73,6 +77,7 @@ RESTAPI= function() {
 		});
 		return promise;
 	}
+
     var updateTask = function (id,title,group) {
     
     };

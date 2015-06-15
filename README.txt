@@ -53,6 +53,7 @@ TODO
 - check task title on save/load - BEFOrE SAVE Avoid conflicts where task/group title updated elsewhere
 - request hours worked when dropping into Done list
 - checkbox next to sprint users to hide/show items by user
+- double click edit username
 
 MAYBE
 - User based interactions

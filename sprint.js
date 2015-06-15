@@ -20,7 +20,7 @@ function addSprintGroup() {
 	var newContent=$('<div class="sprintgroup" data-id="'+ id+'" ><h3>'+a+'</h3></div>');
 	$('.product_backlog > h3').after(newContent);								
 	bindDragDrop(newContent.parent());
-	$('.sprintgoals').append('<div class="sprintgoal" data-id="'+id+'" ><b>'+a+'</b><span class="sprintgoaldescription" >&nbsp;&nbsp;</span></div>');;
+	$('.sprintgoals').append('<div class="sprintgoal" data-id="'+id+'" ><b>'+a+'</b><span class="sprintgoaldescription" ></span></div>');;
 	saveSprint();
 }
 function addSprintUser() {
@@ -87,6 +87,8 @@ function saveSprint() {
 		console.log(['save complete',content]);
 		// REST save sprint returns last saved timestamp
 		$('.sprint').attr('data-lastsaved',content);	
+		$('.undosprintbutton').attr('data-undo','');
+		$('.redosprintbutton').attr('data-undo','');
 	});
 }
 
@@ -108,14 +110,25 @@ function restoreSprint(sprint) {
 			$('.sprintusers').append(users);
 			bindDragDrop($('.sprintusers'));
 		}
-		var goals='';
 		if (typeof sprint.goals=='object') {
+			var goals='';
 			$.each(sprint.goals,function(key,value) {
-				goals+='<div class="sprintgoal" data-id="'+key+'" ><b>'+value.name+'</b><span class="sprintgoaldescription" >'+value.text+'</span></div>';
+				// ensure a space is rendered to allow double click editing
+				var v=value.text;
+				if ($.trim(v).length==0)  {
+					v='&nbsp;';
+				}
+				var n=value.name;
+				if ($.trim(n).length==0)  {
+					n='&nbsp;';
+				}
+				
+				goals+='<div class="sprintgoal row" data-id="'+key+'" ><b class="title small-2 columns">'+n+'</b><span class="sprintgoaldescription small-10 columns" >'+v+'</span></div>';
 			});
-			$('.sprintgoals .sprintgoal').remove();
+			$('.sprintgoals').html('');
 			$('.sprintgoals').append(goals);
 			bindDragDrop($('.sprintgoals'));
+			bindInlineEditing($('.sprintgoals'));
 		}
 		if (typeof sprint.lists=='object') {
 			$.each(sprint.lists,function(key,value) {
@@ -223,8 +236,8 @@ function serialiseSprint() {
 				$.each($('.storypoint',this),function() {
 					storyPoints=$(this).text();
 				});
-
-				var item={'text':$(this).text(),'storypoints':storyPoints,'users':users}
+				var item={'text':$('.sprintitemdescription',this).text(),'storypoints':storyPoints,'users':users}
+				console.log(['READ',item]);
 				items[$(this).attr('data-id')]=item;
 			});
 			var group={'items':items};

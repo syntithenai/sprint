@@ -48,8 +48,10 @@ if (array_key_exists('list',$_GET) && strlen($_GET['list'])>0) {
 		//die();
 		$undo='';
 		if (array_key_exists('undo',$_GET) && intval($_GET['undo'])>0) {
-			$undo=$undo.',';
+			$undo=$_GET['undo'].',';
 		}
+		//echo "SELECT * from sprint where sprintkey='".$_GET['sprint']."' and  lastsaved > '".intval($_GET['poll'])."' order by id DESC LIMIT ".$undo."1";
+		//die();
 		$dbh = new PDO('mysql:host=localhost;dbname='.$database, $user, $pass);
 		foreach($dbh->query("SELECT * from sprint where sprintkey='".$_GET['sprint']."' and  lastsaved > '".intval($_GET['poll'])."' order by id DESC LIMIT ".$undo."1") as $row) {
 			echo $row['sprintdata'];
