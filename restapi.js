@@ -4,7 +4,7 @@
 */
  
 RESTAPI= function() {
-	var token='&token=thisisthetoken';
+	var token='thisisthetoken';
 	var getToken =  function () {
 		var promise=new $.Deferred();
 		promise.resolve(token);
@@ -15,10 +15,14 @@ RESTAPI= function() {
 		promise.resolve('stever');
 		return promise;
 	};
+
+/************************
+ * SPRINTS
+ ************************/
 	var saveSprint = function(sprintData) {
 		var promise=new $.Deferred();
 		getToken().then(function() {
-			$.post('scrumsprint.php',{'token': token, 'sprint':JSON.stringify(sprintData)}).done(function(response) {
+			$.post('sprint.php',{'token': token, 'sprint':JSON.stringify(sprintData)}).done(function(response) {
 				promise.resolve(response);
 			}).fail(function(response) {
 				promise.reject(response);
@@ -32,15 +36,17 @@ RESTAPI= function() {
 	 */
 	var deleteSprint = function(id) {
 		var promise=new $.Deferred();
-		$.post('scrumsprint.php',{'delete':'1','sprint':id}).success(function(response) {
-			if (response.length>0) {
+		getToken().then(function(token) {
+			$.post('sprint.php',{'token':token,'delete':'1','sprint':id}).success(function(response) {
+				if (response.length>0) {
+					promise.reject(response);
+				} else {
+					promise.resolve(response);
+				}
+			}).fail(function(response) {
 				promise.reject(response);
-			} else {
-				promise.resolve(response);
-			}
-		}).fail(function(response) {
-			promise.reject(response);
-		}); 
+			}); 
+		});
 		return promise;
 	}; 
 	var searchSprints = function(currentSprint,title,lastSaved) {
@@ -54,7 +60,26 @@ RESTAPI= function() {
 			if (currentSprint && currentSprint.length>0) {
 				currentSprintText='&sprint='+currentSprint;
 			}
-			$.get('scrumsprint.php?list=20'+currentSprintText+'&title='+title+lastSavedText+token).done(function(response) {
+			$.get('sprint.php?list=20'+currentSprintText+'&title='+title+lastSavedText+'&token='+token).done(function(response) {
+				promise.resolve(response);
+			}).fail(function(response) {
+				promise.reject(response);
+			}); 
+		});
+		return promise;
+	};
+	var pollSprint = function(sprintKey,lastSaved) {
+		var promise=new $.Deferred();
+		getToken(token).then(function() {
+			var lastSavedText='&lastsaved=0';
+			if (lastSaved.length>0) {
+				lastSavedText='&poll='+lastSaved;
+			}
+			var sprint='';
+			if (sprintKey && sprintKey.length>0) {
+				sprint='&sprint='+sprintKey;
+			}
+			$.get('sprint.php?a=1'+sprint+lastSavedText+'&token='+token).done(function(response) {
 				promise.resolve(response);
 			}).fail(function(response) {
 				promise.reject(response);
@@ -69,7 +94,7 @@ RESTAPI= function() {
 			historyText='&undo='+history;
 		}
 		getToken(token).then(function() {
-			$.ajax({ url: "scrumsprint.php?poll=0&sprint="+sprintKey+historyText}).success(function(response) {
+			$.ajax({ url: "sprint.php?poll=0&sprint="+sprintKey+historyText+'&token='+tokem}).success(function(response) {
 				promise.resolve(response);
 			}).fail(function(response) {
 				promise.reject(response);
@@ -77,25 +102,65 @@ RESTAPI= function() {
 		});
 		return promise;
 	}
-
+/************************
+ * TASKS
+ ************************/
+    var newTask = function (title,group) {
+    	var promise=new $.Deferred();
+		getToken().then(function() {
+			$.post('task.php',{'token': token, 'title':title, 'group':group}).done(function(response) {
+				promise.resolve(response);
+			}).fail(function(response) {
+				promise.reject(response);
+			}); 
+		});
+		return promise;
+    };
     var updateTask = function (id,title,group) {
-    
+		var promise=new $.Deferred();
+		getToken().then(function() {
+			$.post('task.php',{'token': token, 'id':id ,'title':title, 'group':group}).done(function(response) {
+				promise.resolve(response);
+			}).fail(function(response) {
+				promise.reject(response);
+			}); 
+		});
+		return promise;
     };
     var deleteTask = function (id) {
-    
+		var promise=new $.Deferred();
+		getToken().then(function() {
+			$.post('task.php',{'token': token, 'id':id ,'delete':1}).done(function(response) {
+				promise.resolve(response);
+			}).fail(function(response) {
+				promise.reject(response);
+			}); 
+		});
+		return promise;
     };
     var searchTasks = function (title) {
+		var promise=new $.Deferred();
+		getToken().then(function() {
+			$.get('task.php',{'token': token, 'id':id ,'title':title, 'group':group}).done(function(response) {
+				promise.resolve(response);
+			}).fail(function(response) {
+				promise.reject(response);
+			}); 
+		});
+		return promise;
+	};
+	var taskComplete = function (id,hours) {
 		
 	};
+/************************
+ * GROUPS
+ ************************/
 	var updateGroup = function (id,title) {
 		
 	};
 	var searchGroups = function (title) {
 		
 	};
-	var taskComplete = function (id,hours) {
-		
-	};
-	return {saveSprint:saveSprint,deleteSprint:deleteSprint,searchSprints:searchSprints,loadSprint:loadSprint,getToken:getToken,updateTask:updateTask,deleteTask:deleteTask,searchTasks:searchTasks,updateGroup:updateGroup,searchGroups:searchGroups,taskComplete:taskComplete}
+	return {pollSprint:pollSprint,saveSprint:saveSprint,deleteSprint:deleteSprint,searchSprints:searchSprints,loadSprint:loadSprint,getToken:getToken,updateTask:updateTask,deleteTask:deleteTask,searchTasks:searchTasks,updateGroup:updateGroup,searchGroups:searchGroups,taskComplete:taskComplete}
 };
 

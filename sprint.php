@@ -1,17 +1,5 @@
 <?php
-/*
-drop table if exists sprint;
-create table sprint (
-  id INTEGER PRIMARY KEY AUTO_INCREMENT,
-  sprintkey VARCHAR(255),
-  sprinttitle VARCHAR(255),
-  sprintdata VARCHAR(2048),
-  lastsaved INTEGER
-)
-*/
-$user='root';
-$pass='';
-$database='scrumsprint';
+include('config.php');
 if (array_key_exists('list',$_GET) && strlen($_GET['list'])>0) {
 	try {
 		$limit='';
@@ -30,12 +18,11 @@ if (array_key_exists('list',$_GET) && strlen($_GET['list'])>0) {
 			$where=' WHERE '.implode(" AND ",$whereClauses).' ';
 		}
 		$dbh = new PDO('mysql:host=localhost;dbname='.$database, $user, $pass);
-		//echo "SELECT * from sprint order by sprinttitle ".$where.$limit;
-		//echo "SELECT id,sprintkey,sprinttitle from sprint ".$where." order by id asc group by sprintkey ".$limit;
+		//echo "SELECT id,sprintkey,sprinttitle from sprint ".$where." group by sprintkey order by id asc ".$limit;
 		//die();
 		$rows=array();
-		foreach($dbh->query("SELECT id,sprintkey,sprinttitle from sprint ".$where." group by sprintkey order by id asc ".$limit) as $row) {
-			$rows[]=$row;
+		foreach($dbh->query("SELECT id,sprintkey,sprinttitle from sprint ".$where." order by id asc ".$limit) as $row) {
+			$rows[$row['sprintkey']]=$row;
 		}
 		echo json_encode($rows);
 	} catch (PDOException $e) {
@@ -96,6 +83,7 @@ if (array_key_exists('list',$_GET) && strlen($_GET['list'])>0) {
 			}*/
 			$sprint->lastsaved=$time;
 			$query="insert into sprint (sprinttitle,sprintkey,sprintdata,lastsaved) values ('".$sprint->header."','".$sprint->id."','".str_replace("\n","",json_encode($sprint))."','".$time."') ";
+			//echo $query;
 			$dbh->query($query);
 			echo $time;
 		}

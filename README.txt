@@ -33,9 +33,7 @@ The JSON3 library is used for parsing.
 Foundation and jquery and jquery UI are used.
 
 BUGS
-- user inside story point after drag ???
 - Double check selectors on serialise/deserialise and add testing. MUST NOT LOSE LIST DATA.
-	- currently eating users/story points
 
 TODO
 - REST API
@@ -48,12 +46,16 @@ TODO
 - Dialog for new task and new group and new user
 	- Select task, select group
 - Next sprint - - archive sprint 
-- total story points
-- Group/goal render - checkbox disable, button delete group
 - check task title on save/load - BEFOrE SAVE Avoid conflicts where task/group title updated elsewhere
 - request hours worked when dropping into Done list
+
+- Group/goal render - checkbox disable, button delete group
 - checkbox next to sprint users to hide/show items by user
 - double click edit username
+
+DONE
+- total story points
+
 
 MAYBE
 - User based interactions

@@ -18,15 +18,16 @@ function addSprintGroup() {
 	var a=prompt('Group name');
 	var id=Math.random().toString(36).substr(2, 9);
 	var newContent=$('<div class="sprintgroup" data-id="'+ id+'" ><h3>'+a+'</h3></div>');
-	$('.product_backlog > h3').after(newContent);								
+	$('.product_backlog > h3').after(newContent);
 	bindDragDrop(newContent.parent());
-	$('.sprintgoals').append('<div class="sprintgoal" data-id="'+id+'" ><b>'+a+'</b><span class="sprintgoaldescription" ></span></div>');;
+	$('.sprintgoals').append('<div class="sprintgoal row" data-id="'+id+'" > <div class="title small-3 columns" ><a href="#" class="button tiny closesprintgroupbutton" >X</a> <input type="checkbox"  checked="true" /><b>'+a+'</b></div><span class="sprintgoaldescription small-9 columns" >&nbsp;</span></div>');
+	bindInlineEditing($('.sprintgoals'));
 	saveSprint();
 }
 function addSprintUser() {
 	var a=prompt('User name');
-	var newContent=$('<span class="sprintuser" data-id="'+ Math.random().toString(36).substr(2, 9)+'" >'+a+'</span>');
-	$('.sprintusers').append(newContent);								
+	var newContent=$('<span class="sprintuser" data-id="'+ Math.random().toString(36).substr(2, 9)+'" ><input type="checkbox"  checked="true"/>'+a+'</span>');
+	$('.sprintusers').append(newContent);
 	bindDragDrop(newContent.parent());
 	saveSprint();
 }
@@ -52,11 +53,13 @@ function initSprint() {
 		pollTimeout=setTimeout(function() {
 			if ($('#polling').get(0).checked) {
 				var lastSaved=$('.sprint').attr('data-lastsaved');
-				$.ajax({ url: "scrumsprint.php?sprint="+$('.sprint').attr('data-id')+"&poll="+lastSaved}).success(function(data) {
+				RESTAPI().pollSprint($('.sprint').attr('data-id'),lastSaved).then(function(data) {
 					try {
+						console.log('polled '.data);
+								
 						//var json=JSON.parse(data.replace("\n","")+';');
-						if (data.responseText && data.responseText.length>0)  {
-							var json=JSON3.parse(data.responseText.replace("\r","").replace("\n",""));
+						if (data && data.length>0)  {
+							var json=JSON3.parse(data.replace("\r","").replace("\n",""));
 							if (json.id!=null && json.id.length>0) {
 								console.log('restore');
 								restoreSprint(json);
@@ -104,12 +107,15 @@ function restoreSprint(sprint) {
 		$('#sprintenddate').val(sprint.enddate);
 		if (typeof sprint.users=='object') {
 			$.each(sprint.users,function(key,value) {
-				users+='<span class="sprintuser" data-id="'+key+'" >'+value+'</span>';
+				users+='<span class="sprintuser" data-id="'+key+'" ><input type="checkbox" checked="true" />'+value+'</span>';
 			});
 			$('.sprintusers .sprintuser').remove();
 			$('.sprintusers').append(users);
 			bindDragDrop($('.sprintusers'));
 		}
+		
+		
+		
 		if (typeof sprint.goals=='object') {
 			var goals='';
 			$.each(sprint.goals,function(key,value) {
@@ -123,7 +129,7 @@ function restoreSprint(sprint) {
 					n='&nbsp;';
 				}
 				
-				goals+='<div class="sprintgoal row" data-id="'+key+'" ><b class="title small-2 columns">'+n+'</b><span class="sprintgoaldescription small-10 columns" >'+v+'</span></div>';
+				goals+='<div class="sprintgoal row" data-id="'+key+'" ><div class="title small-3 columns"><a href="#" class="button tiny closesprintgroupbutton" >X</a> <input type="checkbox"  checked="true" /><b> '+n+'</b></div><span class="sprintgoaldescription small-9 columns" >'+v+'</span></div>';
 			});
 			$('.sprintgoals').html('');
 			$('.sprintgoals').append(goals);
@@ -161,9 +167,9 @@ function restoreSprint(sprint) {
 								}								
 								var storyPoint='';
 								if (value.storypoints && value.storypoints>0) {
-									storyPoint='<div class="storypoint button tiny right" >'+value.storypoints+users+'</div>';
+									storyPoint='<div class="storypoint button tiny right" >'+value.storypoints+'</div>';
 								}								
-								groupItems+='<div class="sprintitem" data-id="'+key+'" >'+storyPoint+'<div class="sprintitemdescription">'+value.text+'</div></div>';
+								groupItems+='<div class="sprintitem" data-id="'+key+'" >'+storyPoint+'<div class="sprintitemdescription">'+value.text+'</div><div class="sprintitemusers" >'+users+'</div></div>';
 							});
 						}
 						var groupTitle=$('.sprintgoals .sprintgoal[data-id="'+key+'"] b').text();
@@ -194,7 +200,7 @@ function serialiseSprint() {
 	$.each($('.sprintgoals .sprintgoal'),function() {
 		var id=$(this).attr('data-id');
 		var name=$('b',this).text();
-		var description=$('.sprintgoaldescription',this).text();		
+		var description=$.trim($('.sprintgoaldescription',this).text());	
 		sprint.goals[id]={'name':name,'text':description};
 	});
 	$.each($('.sprintlist'),function() {
@@ -216,9 +222,7 @@ function serialiseSprint() {
 				$.each($('.storypoint',this),function() {
 					storyPoints=$(this).text();
 				});
-				var textCopy=$(this).clone(true);
-				$('div,b,h3,span',textCopy).remove();
-				var item={'text':textCopy.text(),'storypoints':storyPoints,'users':users};
+				var item={'text':$('.sprintitemdescription',this).text(),'storypoints':storyPoints,'users':users};
 				ungroupedItems[$(this).attr('data-id')]=item;
 			}
 		});
@@ -256,7 +260,7 @@ function loadSprintsWizard() {
 	function refreshSprintList() {
 		RESTAPI().searchSprints($('.sprint').attr('data-id'),$('#loadsprintlistsearchinput').val(),$('.sprint').attr('data-lastsaved')).then(function(res) {	
 			var rendered='';
-			JSON.parse(res).forEach(function(value) {
+			$.each(JSON.parse(res),function(key,value) {
 				rendered+='<div class="row" ><span class="sprintloadtitle">'+value['sprinttitle']+'</span><a class="right button tiny dbdeletesprintbutton" href="#" data-id="'+value['sprintkey']+'" >Delete</a> <a class="right button tiny dbloadsprintbutton" data-id="'+value['sprintkey']+'" href="#"  >Load</a></div>';
 			});
 			$('#loadsprintlistrows').html(rendered);

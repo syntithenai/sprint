@@ -28,20 +28,31 @@
 						.row {
 						  max-width: 100%;
 						 }
+						.closesprintgroupbutton {
+							padding: 0.7em ! important;
+							margin-right: 2em;
+							margin-bottom: 0;
+						}
 						.sprintitem {
 						  min-height: 40px;
 						}
 						.sprintitemdescription {
 						  min-height: 40px;
 						}
-						.sprintgoal {
+						.sprintgoal .title {
 							border-top: 1px solid black;
 						}
-						.sprintgoaldescription {
-							background-color: lightblue;
+						.sprintgoal .title b{
+							padding-left: 2em;
+						}
+						.sprintgoal {
+							padding-right: 1em;
 						}
 						.sprintgoaldescription {
 							padding-left: 1em;
+						}
+						.sprint h3.header {
+							font-size: 1.4em;
 						}
 						.sprintlists, .sprintlist, .sprintgroup ,.sprintitem,.sprintusers, .sprintuser {
 							border :1px solid black;
@@ -72,51 +83,64 @@
 							padding: 0.5em;
 							border: 1px solid black;
 						}
+						.datepickers {
+							background-color: white;
+						}
+						.headerblock > * {
+							background-color: lightgrey ! important;
+							border-top: 3px solid black;
+						}
+						.headerblock label	 {
+							background-color: lightgrey ! important;
+							font-weight: bold;
+							color: black;
+						}
 					</style>
 					
-					
-                    <div class='small-6 columns' >
-						<div class="row" >
-							<div class='small-3 columns' >
-								<span class='small-1 columns trashwrap' >
-									<a href='#' class='button tiny' id='trashcan' >Trash</a>
-								</span>
-							</div>
-							<div class='small-9 columns' >
-								<h3 class="header"  >Sprint M2 Authority Data</h3>
-								<div class='sprintusers row'><b><a href='#' class='addsprintuser button tiny'>+</a> Users</b><span class='sprintuser' data-id='3' >Greg</span></div>
-							</div>
-						</div>
-						<div class="sprintgoals row" >
-							<div class="small-12 columns" >
-								<div class='sprintgoal row' data-id='2' >
-									<b class='title small-2 columns' >sprint UI</b>
-									<span class='sprintgoaldescription small-10 columns' >Sketch UI in drawings</span>
+					<div class="headerblock" >	
+						<div class='small-8 columns' >
+							<div class="row" >
+								<div class='small-2 columns' >
+									<span class='small-1 columns trashwrap' >
+										<a href='#' class='button tiny' id='trashcan' >Trash</a>
+									</span>
 								</div>
-								<div class='sprintgoal row' data-id='5' >
-									<b class='title small-2 columns' >sprint DB</b>
-									<span class='sprintgoaldescription small-10 columns' > Show data from attendance database that will be required for timesheets</span>
+								<div class='small-10 columns' >
+									<div class='right datepickers' ><label for="sprintstartdate" >Start<input type='text' id='sprintstartdate'  class='datepicker' size='11' value='24/03/2015' /></label><label for="sprintenddate" >End<input type='text' id='sprintenddate' class='datepicker' size='11' value='30/03/2015' /></div>
+									<h3 class="header"  >Sprint M2 Authority Data</h3>
+									<div class='sprintusers row'><b><a href='#' class='addsprintuser button tiny'>+</a> Users</b><span class='sprintuser' data-id='3' >Greg</span></div>
 								</div>
-								
 							</div>
+							<div class="sprintgoals row" >
+								<div class="small-12 columns" >
+									<div class='sprintgoal row' data-id='2' >
+										<b class='title small-2 columns' >sprint UI</b>
+										<span class='sprintgoaldescription small-10 columns' >Sketch UI in drawings</span>
+									</div>
+									<div class='sprintgoal row' data-id='5' >
+										<b class='title small-2 columns' >sprint DB</b>
+										<span class='sprintgoaldescription small-10 columns' > Show data from attendance database that will be required for timesheets</span>
+									</div>
+									
+								</div>
+							</div>
+							 
 						</div>
-						 
-					</div>
-                    <div class='small-2 columns' ><label for="sprintstartdate" >Start<input type='text' id='sprintstartdate'  class='datepicker' value='24/03/2015' /></label><label for="sprintenddate" >End<input type='text' id='sprintenddate' class='datepicker' value='30/03/2015' /></div>
-                    <div class='searchtasks small-4 columns'>
-						<a href='#' class='undosprintbutton button tiny' >Undo</a>
-						<a href='#' class='redosprintbutton button tiny' >Redo</a>
-						<a href='#' class='resetsprintbutton button tiny' >New Sprint</a> 
-						<a href='#' class='loadsprintbutton button tiny' >Load Sprint</a>
-						<a href='#' class='nextsprintbutton button tiny' >Next Sprint</a>
 						
-						<div class='storypoints' >
-							<span class='storypoint' >0.5</span><span class='storypoint' >1</span><span class='storypoint' >2</span><span class='storypoint' >3</span><span class='storypoint' >4</span><span class='storypoint' >5</span><span class='storypoint' >6</span><span class='storypoint' >8</span><span class='storypoint' >10</span><span class='storypoint' >15</span><span class='storypoint' >20</span><span class='storypoint' >30</span><span class='storypoint' >50</span>
-							<span class='totalstorypointswrap' ><b>Total</b> <span id='totalstorypoints'>0</span></span>
-							<label class='right pollinglabel' for='polling'  >Polling <input checked="true" type='checkbox' id='polling' /></label>
+						<div class='searchtasks small-4 columns'>
+							<a href='#' class='undosprintbutton button tiny' >Undo</a>
+							<a href='#' class='redosprintbutton button tiny' >Redo</a>
+							<a href='#' class='resetsprintbutton button tiny' >New Sprint</a> 
+							<a href='#' class='loadsprintbutton button tiny' >Load Sprint</a>
+							<a href='#' class='nextsprintbutton button tiny' >Next Sprint</a>
+							
+							<div class='storypoints' >
+								<span class='storypoint' >0.5</span><span class='storypoint' >1</span><span class='storypoint' >2</span><span class='storypoint' >3</span><span class='storypoint' >4</span><span class='storypoint' >5</span><span class='storypoint' >6</span><span class='storypoint' >8</span><span class='storypoint' >10</span><span class='storypoint' >15</span><span class='storypoint' >20</span><span class='storypoint' >30</span><span class='storypoint' >50</span>
+								<span class='totalstorypointswrap' ><b>Total</b> <span id='totalstorypoints'>0</span></span>
+								<label class='right pollinglabel' for='polling'  >Polling <input checked="true" type='checkbox' id='polling' /></label>
+							</div>
 						</div>
-                    
-                </div>
+					</div>
                 <div class="row" ><div class="small-12 columns divider" ></div></div>
                 <div class="sprintlists row" >
                     <div class='sprintlist product_backlog small-4 large-2 columns' data-id='product_backlog' ><a href='#' class='button tiny addtaskbutton' >Add Task</a><a href='#' class='button tiny right addgroupbutton' >Add Group</a><h3>Product Backlog</h3></div>

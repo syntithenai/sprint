@@ -16,7 +16,7 @@ function updateStoryPointsTotal() {
 }
 var bindInlineEditing = function(context) {
 	$( ".sprintgoal b, .sprintgoal .sprintgoaldescription ,.sprintitem .sprintitemdescription,.sprint h3.header",context ).unbind('dblclick.sprint');
-	$( ".sprintgoal b, .sprintgoal .sprintgoaldescription ,.sprintitem .sprintitemdescription,.sprint h3.header",context ).bind('dblclick.sprint',function(e) {
+	$( ".sprintgoal b, .sprintgoal .sprintgoaldescription ,.sprintitem .sprintitemdescription,.sprint h3.header,.sprintuser",context ).bind('dblclick.sprint',function(e) {
 		console.log('dbl click');
 		var res='';
 		if ($(this).hasClass('sprintitemdescription')) {
@@ -37,6 +37,24 @@ var bindInlineEditing = function(context) {
 				$('.storypoint',parent).show();
 				saveSprint();
 			});
+		} else if ($(this).hasClass('sprintuser')) {
+			var parent=$(this).parent();
+			var text=$(e.target).text();
+			var user=$(this);
+			var input=$('<input type="text"  width="20" value="'+text+'" />');
+			$(this).before(input);
+			$(this).hide();
+			input.focus();
+			var desc=this;
+			input.bind('blur',function() {
+				var cb=$('input[type="checkbox"]',desc);
+				$(desc).text($.trim(input.val())).prepend(cb);
+				$('.sprintuser[data-id="'+user.attr('data-id')+'"]').text(input.val());
+				//RESTAPI().updateUser(parent.attr('data-id'),input.val(),null);
+				input.hide();
+				$(desc).show();
+				saveSprint();
+			});
 		} else if ($(this).hasClass('sprintgoaldescription')) {
 			var parent=$(this).parent();
 			var text=$(e.target).text();
@@ -46,22 +64,23 @@ var bindInlineEditing = function(context) {
 			input.focus();
 			var desc=this;
 			input.bind('blur',function() {
-				$(desc).text(input.val());
+				$(desc).text($.trim(input.val()));
 				RESTAPI().updateGroup(parent.attr('data-id'),input.val(),null);
 				input.hide();
 				$(desc).show();
 				saveSprint();
 			});
-		} else if ($(this).parent().hasClass('sprintgoal') && this.tagName=="B") {
+		} else if ($(this).parent().parent().hasClass('sprintgoal') && this.tagName=="B") {
 			var parent=$(this).parent();
-			var text=$(e.target).text();
-			var input=$('<input value="'+text+'" />');
+			var text=$.trim($(e.target).text());
+			var input=$('<input  size="15"  value="'+text+'" />');
 			$(this).before(input);
 			$(this).hide();
 			input.focus();
 			var desc=this;
 			input.bind('blur',function() {
 				var v=input.val();
+				console.log('blur'+v);
 				if (v.length>0)  {
 					$(desc).text(v);
 					$('.sprintgroup[data-id="'+parent.attr('data-id')+'"] h3').text(v);
@@ -74,7 +93,7 @@ var bindInlineEditing = function(context) {
 				$(desc).show();
 				saveSprint();
 			});
-		} else if ($(this).hasClass('header') && $(this).parent().parent().hasClass('sprint')) {
+		} else if ($(this).hasClass('header') && $(this).parent().parent().parent().parent().hasClass('sprint')) {
 			$(this).attr('contentEditable','true');
 			 this.contentEditable=true;
 			// IE10 ?? $('#container *').prop('contentEditable', 'true');
@@ -129,7 +148,7 @@ function handleDrop( event, ui ) {
 				$('.sprintuser',dropTarget).remove();
 				$(dropTarget).append('<div class="sprintitemusers"></div>');
 			}
-			$('.sprintuser[data-id="'+$(ui.draggable).attr('data-id')+'"]').remove();
+			$('.sprintuser[data-id="'+$(ui.draggable).attr('data-id')+'"]',dropTarget).remove();
 			var newUser=$('<div class="sprintuser" data-id="'+$(ui.draggable).attr('data-id')+'" >'+$(ui.draggable).text()+'</div>').draggable({'revert':'invalid'});
 			$('.sprintitemusers',dropTarget).append(newUser);
 			saveSprint();
@@ -305,7 +324,7 @@ $(document).ready(function() {
 	$('.redosprintbutton').click(function() {
 		if (parseInt($(this).attr('data-undo'))>0) {
 			undo=parseInt($(this).attr('data-undo'));
-			RESTAPI().loadSprint($('.sprint').attr('data-id'),undo).then(function(data) {
+			RESTAPI().loadSprint($('.sprint').attr('data-id'),undo-1).then(function(data) {
 				try {
 					if (data && data.length>0)  {
 						var json=JSON3.parse(data.replace("\r","").replace("\n",""));
